@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://coldwest.sa/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://coldwest.sa/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://coldwest.sa/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://coldwest.sa/"/>
+  </url>
+  <url>
+    <loc>https://coldwest.sa/en/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://coldwest.sa/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://coldwest.sa/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://coldwest.sa/"/>
+  </url>
+</urlset>
