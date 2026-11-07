@@ -230,7 +230,7 @@ if (counter && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
 }
 
 /* ---------- Analytics: Google Analytics 4, plus whatsapp_click / call_click events ---------- */
-const GA_ID = "";
+const GA_ID = "G-5LYTYQK1WR";
 window.dataLayer = window.dataLayer || [];
 function gtag() { window.dataLayer.push(arguments); }
 if (GA_ID) {
