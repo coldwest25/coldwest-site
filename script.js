@@ -229,12 +229,22 @@ if (counter && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
   }, 550);
 }
 
-/* ---------- Measurement hooks (whatsapp_click / call_click) ---------- */
+/* ---------- Analytics: Google Analytics 4, plus whatsapp_click / call_click events ---------- */
+const GA_ID = "";
 window.dataLayer = window.dataLayer || [];
+function gtag() { window.dataLayer.push(arguments); }
+if (GA_ID) {
+  const tag = document.createElement("script");
+  tag.async = true;
+  tag.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+  document.head.appendChild(tag);
+  gtag("js", new Date());
+  gtag("config", GA_ID);
+}
 document.addEventListener("click", (e) => {
   const a = e.target.closest("[data-track]");
   if (!a) return;
-  window.dataLayer.push({ event: a.dataset.track, place: a.dataset.place || "", symptom: a.dataset.symptom || "" });
+  gtag("event", a.dataset.track, { place: a.dataset.place || "", symptom: a.dataset.symptom || "", page_language: LANG });
 });
 
 /* ---------- Brand fonts, packaged per the Thmanyah licence: no font file is served ---------- */

@@ -480,6 +480,8 @@ section { padding-block: var(--section); }
   .header-actions .btn-ghost { display: none; }
 }
 
+.privacy-note { margin-block-start: 6px; font-size: 13px; color: var(--steel); max-width: 70ch; }
+
 /* ---------- English page ---------- */
 html[lang="en"] {
   --display: "Montserrat", system-ui, sans-serif;
