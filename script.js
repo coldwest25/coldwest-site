@@ -263,3 +263,54 @@ if (document.documentElement.lang !== "en") {
     }
   })().catch(() => {});
 }
+
+/* ---------- Floating Google rating badge ---------- */
+(() => {
+  const badge = document.querySelector("[data-gbadge]");
+  if (!badge) return;
+  const pill = badge.querySelector(".gbadge-pill");
+  const card = badge.querySelector(".gbadge-card");
+  const closeBtn = badge.querySelector(".gbadge-close");
+  const quote = badge.querySelector("[data-gq]");
+  const who = badge.querySelector("[data-gqa]");
+  const quotes = [...document.querySelectorAll(".quotes blockquote")]
+    .map((b) => ({ text: b.querySelector("p")?.textContent.trim(), who: b.querySelector("footer")?.textContent.trim() }))
+    .filter((q) => q.text && q.text.length > 20);
+  let qi = Math.max(0, quotes.findIndex((q) => q.text === quote.textContent.trim()));
+
+  const open = () => {
+    if (quotes.length) {
+      const q = quotes[qi % quotes.length];
+      quote.textContent = q.text;
+      who.textContent = q.who;
+      qi++;
+    }
+    card.hidden = false;
+    pill.setAttribute("aria-expanded", "true");
+    badge.classList.remove("is-away");
+    closeBtn.focus({ preventScroll: true });
+  };
+  const close = (refocus) => {
+    if (card.hidden) return;
+    card.hidden = true;
+    pill.setAttribute("aria-expanded", "false");
+    if (refocus) pill.focus({ preventScroll: true });
+    syncAway();
+  };
+  pill.addEventListener("click", () => (card.hidden ? open() : close(false)));
+  closeBtn.addEventListener("click", () => close(true));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(true); });
+  document.addEventListener("click", (e) => { if (!badge.contains(e.target)) close(false); });
+
+  /* Step aside while the reviews section or the footer is on screen */
+  const watched = [document.querySelector(".reviews"), document.querySelector(".site-footer")].filter(Boolean);
+  const onScreen = new Set();
+  function syncAway() { badge.classList.toggle("is-away", card.hidden && onScreen.size > 0); }
+  if ("IntersectionObserver" in window && watched.length) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => (en.isIntersecting ? onScreen.add(en.target) : onScreen.delete(en.target)));
+      syncAway();
+    }, { threshold: 0.15 });
+    watched.forEach((el) => io.observe(el));
+  }
+})();

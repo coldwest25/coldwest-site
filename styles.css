@@ -509,3 +509,80 @@ html[lang="en"] .quotes blockquote p::after { content: "\201D"; }
   html[lang="en"] .origin-name { font-size: 18px; }
   html[lang="en"] .quotes blockquote p { font-size: 17.5px; }
 }
+
+/* ---------- Floating Google rating badge ---------- */
+.gbadge {
+  position: fixed; z-index: 60;
+  inset-inline-end: max(16px, env(safe-area-inset-left, 0px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
+  pointer-events: none;
+}
+html[dir="ltr"] .gbadge, html[lang="en"] .gbadge { inset-inline-end: max(16px, env(safe-area-inset-right, 0px)); }
+.gbadge > * { pointer-events: auto; }
+.gmark { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--white); flex: none; }
+.gmark-svg { width: 18px; height: 18px; }
+
+.gbadge-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 7px 7px 16px; border: 0; border-radius: 999px; cursor: pointer;
+  background: linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%);
+  color: var(--white); font: 500 15px/1.6 var(--sans);
+  box-shadow: 0 14px 30px -12px rgba(6, 26, 43, .55), 0 0 0 1px rgba(142, 207, 238, .22);
+  transform: translateY(0); opacity: 1;
+  transition: transform .45s var(--ease-out), opacity .3s ease, box-shadow .2s ease;
+}
+html[lang="en"] .gbadge-pill { padding: 7px 16px 7px 7px; }
+.gbadge-pill .num { font-weight: 700; font-size: 16px; }
+.gbadge-star { width: 16px; height: 16px; color: var(--amber); }
+.gbadge-label { padding-block: 0 2px; }
+.gbadge-pill:hover { box-shadow: 0 18px 34px -12px rgba(6, 26, 43, .6), 0 0 0 1px rgba(142, 207, 238, .5); }
+.gbadge.is-away .gbadge-pill { transform: translateY(calc(100% + 32px)); opacity: 0; pointer-events: none; }
+
+.gbadge-card {
+  width: min(320px, calc(100vw - 32px));
+  padding: 18px 20px 20px; border-radius: var(--r-box);
+  background: linear-gradient(165deg, #12406A 0%, var(--navy) 45%, var(--navy-deep) 100%);
+  color: var(--white);
+  box-shadow: 0 30px 60px -20px rgba(6, 26, 43, .65), 0 0 0 1px rgba(142, 207, 238, .2);
+  transform-origin: bottom left;
+  animation: gbadge-in .38s var(--ease-out);
+}
+html[lang="en"] .gbadge-card { transform-origin: bottom right; }
+@keyframes gbadge-in { from { opacity: 0; transform: translateY(10px) scale(.94); } }
+.gbadge-head { display: flex; align-items: center; gap: 10px; }
+.gbadge-title { flex: 1; font: 700 17px/1.6 var(--display); padding-block: 2px 7px; }
+.gbadge-close {
+  display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
+  border: 0; background: rgba(255, 255, 255, .1); color: var(--white); cursor: pointer;
+}
+.gbadge-close svg { width: 18px; height: 18px; }
+.gbadge-close:hover { background: rgba(255, 255, 255, .18); }
+.gbadge-score { display: flex; align-items: center; gap: 10px; margin-block: 14px 4px; }
+.gbadge-score .num { font-size: 40px; font-weight: 700; line-height: 1.1; }
+.gbadge-score .stars .i { width: 18px; height: 18px; }
+.gbadge-of { color: var(--ice-light); font-size: 15px; padding-block-end: 4px; }
+.gbadge-quote { margin: 12px 0 18px; padding: 14px 16px 16px; border-radius: var(--r-card); background: rgba(255, 255, 255, .07); }
+.gbadge-quote p { font: 500 16px/1.75 var(--sans); color: var(--white); text-wrap: pretty; }
+.gbadge-quote p::before { content: "«"; color: var(--ice); }
+.gbadge-quote p::after { content: "»"; color: var(--ice); }
+html[lang="en"] .gbadge-quote p::before { content: "“"; }
+html[lang="en"] .gbadge-quote p::after { content: "”"; }
+.gbadge-quote footer { margin-block-start: 6px; font-size: 13px; line-height: 1.7; color: var(--ice-light); }
+.gbadge-cta {
+  display: block; text-align: center; text-decoration: none;
+  padding: 11px 16px 14px; border-radius: 999px;
+  background: var(--white); color: var(--navy); font: 700 16px/1.6 var(--sans);
+}
+.gbadge-cta:hover { background: var(--ice-light); }
+.gbadge-pill:focus-visible, .gbadge-close:focus-visible, .gbadge-cta:focus-visible { outline: 3px solid var(--ice); outline-offset: 3px; }
+
+@media (max-width: 640px) {
+  .gbadge-pill { font-size: 14px; padding-block: 6px; }
+  .gmark { width: 28px; height: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gbadge-pill { transition: opacity .2s ease; }
+  .gbadge.is-away .gbadge-pill { transform: none; }
+  .gbadge-card { animation: none; }
+}
