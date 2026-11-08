@@ -210,14 +210,14 @@ origins.forEach((o, idx) => {
   });
 });
 
-/* ---------- Hero reading: one count-down on load ---------- */
+/* ---------- Hero reading: one count-down when seen ---------- */
 const counter = document.querySelector("[data-count-from]");
 if (counter && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
   const from = +counter.dataset.countFrom;
   const to = +counter.dataset.countTo;
   const dur = 1600;
   counter.textContent = from;
-  setTimeout(() => {
+  const run = () => setTimeout(() => {
     const t0 = performance.now();
     const tick = (now) => {
       const p = Math.min(1, (now - t0) / dur);
@@ -226,7 +226,14 @@ if (counter && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
       if (p < 1) requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
-  }, 550);
+  }, 350);
+  /* The hero now sits below the problem picker: count down when the reading comes into view */
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { io.disconnect(); run(); }
+    }, { threshold: 0.6 });
+    io.observe(counter);
+  } else run();
 }
 
 /* ---------- Analytics: Google Analytics 4, plus whatsapp_click / call_click events ---------- */
