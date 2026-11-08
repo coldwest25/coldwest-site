@@ -438,13 +438,19 @@ main > section:first-child { padding-block-start: calc(var(--section) * .6); }
   .reading { grid-area: reading; position: relative; inset: auto; width: auto; margin-block-start: 28px; }
   .section-head { margin-block-end: 36px; }
   .section-head p { font-size: 17.5px; }
-  .chips { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); padding-block-end: 6px; scrollbar-width: none; }
-  .chips::-webkit-scrollbar { display: none; }
-  .chip { flex: none; min-height: 48px; font-size: 16px; }
-  .diag-body { padding: 28px 22px; }
-  .diag-body h3 { font-size: 22px; }
+  /* Phone: all six symptoms visible at once, two even columns, no sideways scroll */
+  .diagnose .section-head { margin-block-end: 24px; }
+  .diagnose { padding-block-end: 48px; }
+  .chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-block-end: 16px; }
+  .chip { min-height: 50px; padding-inline: 14px 12px; gap: 8px; border-radius: 14px; font-size: 15.5px; line-height: 1.35; text-align: start; }
+  .chip .i { width: 20px; height: 20px; }
+  /* One panel, not a card inside a card: the "what we do" part sits under a hairline */
+  .diag-panel { border-radius: 20px; }
+  .diag-body { padding: 24px 20px 20px; }
+  .diag-body h3 { font-size: 21px; line-height: 1.45; text-wrap: balance; }
   .causes li { font-size: 16.5px; }
-  .diag-side { padding: 26px 22px; }
+  .diag-side { margin: 0 20px; padding: 20px 0 24px; background: transparent; border-radius: 0; border-block-start: 1px solid rgba(46, 127, 184, .18); gap: 10px; }
+  #diag-do { font-size: 16px; }
   .diag-side .btn { align-self: stretch; }
   .aud { grid-template-columns: 1fr; }
   .aud img { height: auto; min-height: 0; aspect-ratio: 16 / 10; }
@@ -522,24 +528,31 @@ html[lang="en"] .quotes blockquote p::after { content: "\201D"; }
 }
 html[dir="ltr"] .gbadge, html[lang="en"] .gbadge { inset-inline-end: max(16px, env(safe-area-inset-right, 0px)); }
 .gbadge > * { pointer-events: auto; }
-.gmark { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--white); flex: none; }
-.gmark-svg { width: 18px; height: 18px; }
+.gmark { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--white); flex: none; }
+.gmark-svg { width: 16px; height: 16px; }
 
-.gbadge-pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 7px 7px 7px 16px; border: 0; border-radius: 999px; cursor: pointer;
+/* One navy bar holding both badges: commercial register | Google rating */
+.gbadge-pills {
+  display: inline-flex; align-items: stretch; padding: 4px; border-radius: 999px;
   background: linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%);
-  color: var(--white); font: 500 15px/1.6 var(--sans);
-  box-shadow: 0 14px 30px -12px rgba(6, 26, 43, .55), 0 0 0 1px rgba(142, 207, 238, .22);
-  transform: translateY(0); opacity: 1;
-  transition: transform .45s var(--ease-out), opacity .3s ease, box-shadow .2s ease;
+  box-shadow: 0 12px 28px -12px rgba(6, 26, 43, .55), 0 0 0 1px rgba(142, 207, 238, .22);
+  transition: transform .45s var(--ease-out), opacity .3s ease;
 }
-html[lang="en"] .gbadge-pill { padding: 7px 16px 7px 7px; }
-.gbadge-pill .num { font-weight: 700; font-size: 16px; }
-.gbadge-star { width: 16px; height: 16px; color: var(--amber); }
+.gbadge-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding-block: 3px; padding-inline: 4px 12px; border: 0; border-radius: 999px; cursor: pointer;
+  background: transparent; color: var(--white); font: 500 14px/1.6 var(--sans);
+  transition: background-color .2s ease;
+}
+.gbadge-pill + .gbadge-pill { position: relative; margin-inline-start: 5px; }
+.gbadge-pill + .gbadge-pill::before {
+  content: ""; position: absolute; inset-inline-start: -3px; top: 9px; bottom: 9px; width: 1px; background: rgba(203, 233, 247, .22);
+}
+.gbadge-pill:hover, .gbadge-pill[aria-expanded="true"] { background: rgba(255, 255, 255, .1); }
+.gbadge-pill .num { font-weight: 700; font-size: 15px; }
+.gbadge-star { width: 14px; height: 14px; color: var(--amber); }
 .gbadge-label { padding-block: 0 2px; }
-.gbadge-pill:hover { box-shadow: 0 18px 34px -12px rgba(6, 26, 43, .6), 0 0 0 1px rgba(142, 207, 238, .5); }
-.gbadge.is-away .gbadge-pill, .gbadge.is-away .crbadge-pill { transform: translateY(calc(100% + 32px)); opacity: 0; pointer-events: none; }
+.gbadge.is-away .gbadge-pills { transform: translateY(calc(100% + 32px)); opacity: 0; pointer-events: none; }
 
 .gbadge-card {
   width: min(320px, calc(100vw - 32px));
@@ -582,20 +595,24 @@ html[lang="en"] .gbadge-card { transform-origin: bottom right; }
 
 @media (max-height: 700px) { .gbadge-qr { width: 150px; } .gbadge-qr-ring { padding: 12px; } }
 @media (max-width: 640px) {
-  .gbadge-pill { font-size: 14px; padding-block: 6px; }
-  .gmark { width: 28px; height: 28px; }
+  /* Phone: a compact bar — the CR number and «في قوقل» live in the cards */
+  .gbadge { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .cr-num-wide, .g-label-wide { display: none; }
+  .gbadge-pills { padding: 3px; }
+  .gbadge-pill { font-size: 13px; padding-inline: 3px 10px; gap: 6px; }
+  .gbadge-pill .num { font-size: 14px; }
+  .gmark { width: 26px; height: 26px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .gbadge-pill { transition: opacity .2s ease; }
-  .gbadge.is-away .gbadge-pill, .gbadge.is-away .crbadge-pill { transform: none; }
+  .gbadge-pills { transition: opacity .2s ease; }
+  .gbadge.is-away .gbadge-pills { transform: none; }
   .gbadge-card { animation: none; }
 }
 
-/* Commercial register badge (sits above the Google pill) */
+/* Commercial register badge (first segment of the badge bar) */
 .crmark { background: var(--ice-light); color: var(--navy); }
-.crmark-svg { width: 18px; height: 18px; }
-.crbadge-pill .num { font-size: 15px; font-weight: 600; letter-spacing: .02em; }
-.crbadge-pill { transition-delay: .04s; }
+.crmark-svg { width: 16px; height: 16px; }
+.crbadge-pill .num { font-size: 14px; font-weight: 600; letter-spacing: .02em; }
 .cr-label { margin-block: 16px 0; font-size: 14px; line-height: 1.7; color: var(--ice-light); padding-block-end: 2px; }
 .cr-number .num { font-size: 34px; font-weight: 700; line-height: 1.2; letter-spacing: .03em; }
 .cr-facts { display: grid; gap: 2px; margin-block: 12px 0; padding: 12px 16px 14px; border-radius: var(--r-card); background: rgba(255, 255, 255, .07); }
