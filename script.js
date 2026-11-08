@@ -271,20 +271,7 @@ if (document.documentElement.lang !== "en") {
   const pill = badge.querySelector(".gbadge-pill");
   const card = badge.querySelector(".gbadge-card");
   const closeBtn = badge.querySelector(".gbadge-close");
-  const quote = badge.querySelector("[data-gq]");
-  const who = badge.querySelector("[data-gqa]");
-  const quotes = [...document.querySelectorAll(".quotes blockquote")]
-    .map((b) => ({ text: b.querySelector("p")?.textContent.trim(), who: b.querySelector("footer")?.textContent.trim() }))
-    .filter((q) => q.text && q.text.length > 20);
-  let qi = Math.max(0, quotes.findIndex((q) => q.text === quote.textContent.trim()));
-
   const open = () => {
-    if (quotes.length) {
-      const q = quotes[qi % quotes.length];
-      quote.textContent = q.text;
-      who.textContent = q.who;
-      qi++;
-    }
     card.hidden = false;
     pill.setAttribute("aria-expanded", "true");
     badge.classList.remove("is-away");
