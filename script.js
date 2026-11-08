@@ -271,35 +271,58 @@ if (document.documentElement.lang !== "en") {
   })().catch(() => {});
 }
 
-/* ---------- Floating Google rating badge ---------- */
+/* ---------- Floating badges: commercial register + Google rating ---------- */
 (() => {
   const badge = document.querySelector("[data-gbadge]");
   if (!badge) return;
-  const pill = badge.querySelector(".gbadge-pill");
-  const card = badge.querySelector(".gbadge-card");
-  const closeBtn = badge.querySelector(".gbadge-close");
-  const open = () => {
+  const pills = [...badge.querySelectorAll(".gbadge-pill")];
+  const cardOf = (pill) => document.getElementById(pill.getAttribute("aria-controls"));
+  const openCard = () => pills.map(cardOf).find((c) => c && !c.hidden);
+
+  const closeAll = (refocusPill) => {
+    pills.forEach((p) => { cardOf(p).hidden = true; p.setAttribute("aria-expanded", "false"); });
+    if (refocusPill) refocusPill.focus({ preventScroll: true });
+    syncAway();
+  };
+  const open = (pill) => {
+    closeAll();
+    const card = cardOf(pill);
     card.hidden = false;
     pill.setAttribute("aria-expanded", "true");
     badge.classList.remove("is-away");
-    closeBtn.focus({ preventScroll: true });
+    card.querySelector(".gbadge-close").focus({ preventScroll: true });
   };
-  const close = (refocus) => {
-    if (card.hidden) return;
-    card.hidden = true;
-    pill.setAttribute("aria-expanded", "false");
-    if (refocus) pill.focus({ preventScroll: true });
-    syncAway();
-  };
-  pill.addEventListener("click", () => (card.hidden ? open() : close(false)));
-  closeBtn.addEventListener("click", () => close(true));
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(true); });
-  document.addEventListener("click", (e) => { if (!badge.contains(e.target)) close(false); });
+  pills.forEach((pill) => {
+    pill.addEventListener("click", () => (cardOf(pill).hidden ? open(pill) : closeAll()));
+    cardOf(pill).querySelector(".gbadge-close").addEventListener("click", () => closeAll(pill));
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    const c = openCard();
+    if (c) closeAll(pills.find((p) => cardOf(p) === c));
+  });
+  document.addEventListener("click", (e) => { if (!badge.contains(e.target) && openCard()) closeAll(); });
+
+  /* Copy the commercial register number */
+  badge.querySelectorAll("[data-copy]").forEach((btn) => {
+    const label = btn.textContent;
+    btn.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(btn.dataset.copy); }
+      catch {
+        const n = badge.querySelector("[data-cr]");
+        const r = document.createRange(); r.selectNodeContents(n);
+        const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+        return;
+      }
+      btn.textContent = btn.dataset.done;
+      setTimeout(() => (btn.textContent = label), 1800);
+    });
+  });
 
   /* Step aside while the reviews section or the footer is on screen */
   const watched = [document.querySelector(".reviews"), document.querySelector(".site-footer")].filter(Boolean);
   const onScreen = new Set();
-  function syncAway() { badge.classList.toggle("is-away", card.hidden && onScreen.size > 0); }
+  function syncAway() { badge.classList.toggle("is-away", !openCard() && onScreen.size > 0); }
   if ("IntersectionObserver" in window && watched.length) {
     const io = new IntersectionObserver((entries) => {
       entries.forEach((en) => (en.isIntersecting ? onScreen.add(en.target) : onScreen.delete(en.target)));
